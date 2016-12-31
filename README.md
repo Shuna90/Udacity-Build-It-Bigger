@@ -13,5 +13,4 @@ GCE module and passes them to the Android Library for display.
 * Use the Gradle App Engine plugin to deploy a backend
 * Configure an integration test suite that runs against the local App Engine development server
 
-
-
+![alt tag](https://github.com/altran-git/Build_It_Bigger/blob/master/projoverview.png)
