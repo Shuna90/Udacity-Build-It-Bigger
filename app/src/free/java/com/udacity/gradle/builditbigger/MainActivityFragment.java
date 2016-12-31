@@ -1,6 +1,7 @@
 package com.udacity.gradle.builditbigger;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.ProgressBar;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+
+import app.com.example.android.jokeandroidlib.JokeActivity;
 
 /**
  * Created by shuna on 12/30/16.
@@ -35,15 +38,23 @@ public class MainActivityFragment extends Fragment {
         mProgressBar = (ProgressBar) root.findViewById(R.id.progressBar);
         mJokeView = root.findViewById(R.id.joke_view);
         mButton = (Button)root.findViewById(R.id.button);
-        /*
+
         mButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                new EndpointsAsyncTask().execute(new Pair<Context, String>(getContext(), "Manfred"));
+                new EndpointsAsyncTask(new EndpointsAsyncTask.TastListener(){
+
+                    @Override
+                    public void onTaskFinished(String string) {
+                        Intent intent = new Intent(getActivity(), JokeActivity.class);
+                        intent.putExtra(JokeActivity.EXTRA_JOKE, string);
+                        startActivity(intent);
+                    }
+                }).execute();
             }
         });
-        */
+
 
         mAdView = (AdView) root.findViewById(R.id.adView);
         // Create an ad request. Check logcat output for the hashed device ID to

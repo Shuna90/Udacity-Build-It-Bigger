@@ -1,6 +1,7 @@
 package com.udacity.gradle.builditbigger;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Pair;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+
+import app.com.example.android.jokeandroidlib.JokeActivity;
 
 /**
  * Created by shuna on 12/30/16.
@@ -33,7 +36,15 @@ public class MainActivityFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                new EndpointsAsyncTask().execute(new Pair<Context, String>(getContext(), "Manfred"));
+                new EndpointsAsyncTask(new EndpointsAsyncTask.TastListener(){
+
+                    @Override
+                    public void onTaskFinished(String string) {
+                        Intent intent = new Intent(getActivity(), JokeActivity.class);
+                        intent.putExtra(JokeActivity.EXTRA_JOKE, string);
+                        startActivity(intent);
+                    }
+                }).execute();
             }
         });
 
