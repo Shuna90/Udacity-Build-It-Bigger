@@ -9,8 +9,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 
 import app.com.example.android.jokeandroidlib.JokeActivity;
 
@@ -23,11 +25,12 @@ public class MainActivityFragment extends Fragment {
     private ProgressBar mProgressBar;
     private View mJokeView;
     private AdView mAdView;
+    InterstitialAd mInterstitialAd;
+    FetchJokeAsyncTask task;
 
     public MainActivityFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,23 +42,30 @@ public class MainActivityFragment extends Fragment {
         mJokeView = root.findViewById(R.id.joke_view);
         mButton = (Button)root.findViewById(R.id.button);
 
+        mInterstitialAd = new InterstitialAd(getActivity());
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                requestNewInterstitial();
+                setTask();
+                task.execute();
+            }
+        });
+
+        requestNewInterstitial();
+
         mButton.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View v) {
-                new FetchJokeAsyncTask(new FetchJokeAsyncTask.TastListener(){
-
-                    @Override
-                    public void onTaskFinished(String string) {
-                        Intent intent = new Intent(getActivity(), JokeActivity.class);
-                        intent.putExtra(JokeActivity.EXTRA_JOKE, string);
-                        startActivity(intent);
-                    }
-                }).execute();
+                setTask();
+                task.execute();
             }
         });
 
-
+        /*
         mAdView = (AdView) root.findViewById(R.id.adView);
         // Create an ad request. Check logcat output for the hashed device ID to
         // get test ads on a physical device. e.g.
@@ -64,6 +74,36 @@ public class MainActivityFragment extends Fragment {
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         mAdView.loadAd(adRequest);
+        */
         return root;
     }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+    private void startJokeActivity(String joke){
+        Intent intent = new Intent(getActivity(), JokeActivity.class);
+        intent.putExtra(JokeActivity.EXTRA_JOKE, joke);
+        startActivity(intent);
+    }
+
+    private void setTask(){
+        task = new FetchJokeAsyncTask(new FetchJokeAsyncTask.TastListener(){
+
+            @Override
+            public void onTaskFinished(String string) {
+                if (mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                } else {
+                    startJokeActivity(string);
+                }
+            }
+        });
+    }
+
 }

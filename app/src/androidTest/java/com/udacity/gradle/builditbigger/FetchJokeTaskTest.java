@@ -10,7 +10,10 @@ import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by shuna on 12/31/16.
@@ -46,5 +49,7 @@ public class FetchJokeTaskTest {
         assertTrue("Result is empty", joke.length() > 0);  // the second parameter is the condition you are testing
 
         */
+        onView(withId(R.id.text_joke))
+                .check(matches(not(withText(""))));
     }
 }

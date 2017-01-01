@@ -54,6 +54,10 @@ dependencies {
     compile 'com.android.support:support-v4:25.1.0'
 
     testCompile 'junit:junit:4.12'
+    androidTestCompile 'com.android.support:support-annotations:25.1.0'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+
 }
 apply plugin: 'com.google.gms.google-services'
 
