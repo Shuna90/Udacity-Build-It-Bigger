@@ -43,7 +43,7 @@ public class MainActivityFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                new EndpointsAsyncTask(new EndpointsAsyncTask.TastListener(){
+                new FetchJokeAsyncTask(new FetchJokeAsyncTask.TastListener(){
 
                     @Override
                     public void onTaskFinished(String string) {

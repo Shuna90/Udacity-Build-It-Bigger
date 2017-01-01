@@ -15,13 +15,17 @@ import java.io.IOException;
  * Created by shuna on 12/29/16.
  */
 
-public class EndpointsAsyncTask extends AsyncTask<Void, Void, String> {
+public class FetchJokeAsyncTask extends AsyncTask<Void, Void, String> {
     private static MyApi myApiService = null;
     private Context context;
     private TastListener listener;
 
-    public EndpointsAsyncTask(TastListener tastListener) {
+    public FetchJokeAsyncTask(TastListener tastListener) {
         listener = tastListener;
+    }
+
+    public FetchJokeAsyncTask() {
+
     }
 
     public interface TastListener {
