@@ -2,6 +2,8 @@ package com.udacity.gradle.builditbigger;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.shuna.myapplication.backend.myApi.MyApi;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -19,9 +21,13 @@ public class FetchJokeAsyncTask extends AsyncTask<Void, Void, String> {
     private static MyApi myApiService = null;
     private Context context;
     private TastListener listener;
+    private ProgressBar progressBar;
+    private View jokeView;
 
-    public FetchJokeAsyncTask(TastListener tastListener) {
+    public FetchJokeAsyncTask(TastListener tastListener, ProgressBar progressBar, View jokeView) {
         listener = tastListener;
+        this.progressBar = progressBar;
+        this.jokeView = jokeView;
     }
 
     public FetchJokeAsyncTask() {
@@ -30,6 +36,13 @@ public class FetchJokeAsyncTask extends AsyncTask<Void, Void, String> {
 
     public interface TastListener {
         void onTaskFinished(String string);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        progressBar.setVisibility(View.VISIBLE);
+        jokeView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -62,5 +75,6 @@ public class FetchJokeAsyncTask extends AsyncTask<Void, Void, String> {
     @Override
     protected void onPostExecute(String result) {
         listener.onTaskFinished(result);
+        progressBar.setVisibility(View.GONE);
     }
 }

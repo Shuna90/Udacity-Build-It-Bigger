@@ -6,6 +6,9 @@ import android.widget.TextView;
 
 public class JokeActivity extends AppCompatActivity {
     public static final String EXTRA_JOKE = "EXTRA_JOKE";
+    public static final String JOKE_KEY = "JOKE_KEY";
+    public static final String KEY_FREE = "KEY_FREE";
+    public static final String KEY_PAID = "KEY_PAID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +22,11 @@ public class JokeActivity extends AppCompatActivity {
         }
 
         if (getIntent() != null && getIntent().hasExtra(EXTRA_JOKE)){
-            text_joke.setText(getIntent().getStringExtra(EXTRA_JOKE));
+            if (getIntent().getStringExtra(JOKE_KEY).equals(KEY_PAID)){
+                text_joke.setText(getIntent().getStringExtra(EXTRA_JOKE));
+            }else {
+                text_joke.setText(R.string.no_joke);
+            }
         }
     }
 }

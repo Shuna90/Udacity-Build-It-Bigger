@@ -1,5 +1,6 @@
 package com.udacity.gradle.builditbigger;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,12 +22,12 @@ import app.com.example.android.jokeandroidlib.JokeActivity;
  */
 public class MainActivityFragment extends Fragment {
 
+    private static final int JOKE_ACTIVITY_REQ_CODE = 0;
     private Button mButton;
     private ProgressBar mProgressBar;
     private View mJokeView;
     private AdView mAdView;
     InterstitialAd mInterstitialAd;
-    FetchJokeAsyncTask task;
 
     public MainActivityFragment() {
         // Required empty public constructor
@@ -49,8 +50,13 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onAdClosed() {
                 requestNewInterstitial();
-                setTask();
-                task.execute();
+                new FetchJokeAsyncTask(new FetchJokeAsyncTask.TastListener(){
+
+                    @Override
+                    public void onTaskFinished(String string) {
+                        startJokeActivity(string);
+                    }
+                }, mProgressBar, mJokeView).execute();
             }
         });
 
@@ -60,8 +66,18 @@ public class MainActivityFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                setTask();
-                task.execute();
+                new FetchJokeAsyncTask(new FetchJokeAsyncTask.TastListener(){
+
+                    @Override
+                    public void onTaskFinished(String string) {
+                        if (mInterstitialAd.isLoaded()) {
+                            mInterstitialAd.show();
+                        } else {
+                            startJokeActivity(string);
+                        }
+                    }
+                }, mProgressBar, mJokeView).execute();
+
             }
         });
 
@@ -89,21 +105,17 @@ public class MainActivityFragment extends Fragment {
     private void startJokeActivity(String joke){
         Intent intent = new Intent(getActivity(), JokeActivity.class);
         intent.putExtra(JokeActivity.EXTRA_JOKE, joke);
-        startActivity(intent);
+        intent.putExtra(JokeActivity.JOKE_KEY, JokeActivity.KEY_FREE);
+        startActivityForResult(intent, JOKE_ACTIVITY_REQ_CODE);
     }
 
-    private void setTask(){
-        task = new FetchJokeAsyncTask(new FetchJokeAsyncTask.TastListener(){
-
-            @Override
-            public void onTaskFinished(String string) {
-                if (mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                } else {
-                    startJokeActivity(string);
-                }
-            }
-        });
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //When returning from jokeActivity, show the joke layout and hide the progress bar
+        if(resultCode == Activity.RESULT_CANCELED){
+            mJokeView.setVisibility(View.VISIBLE);
+            mProgressBar.setVisibility(View.GONE);
+        }
     }
 
 }
